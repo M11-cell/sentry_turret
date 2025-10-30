@@ -156,3 +156,4 @@ Target Selection: Instead of tracking the first object, allow the user to select
 
 Safe Zone Limits: Implement software limits in the Actuation Node to ensure your servos never move beyond their physical stop limits, preventing burnout.
 
+This multi-node, modular approach will give you a fantastic foundation in ROS 2 development! Let me know if you'd like a code snippet for the Tracking/Logic Node's PID implementation in Python!
