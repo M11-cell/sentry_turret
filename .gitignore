@@ -9,6 +9,7 @@ log/
 # --- VS Code IntelliSense database ---
 browse.vc.db
 browse.vc.db*
+.vscode/
 
 # --- Python cache files ---
 __pycache__/
