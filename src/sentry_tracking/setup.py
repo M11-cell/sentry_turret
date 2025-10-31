@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'image_pub_ = sentry_tracker.image_publisher:main'
         ],
     },
 )
