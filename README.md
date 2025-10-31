@@ -1,46 +1,15 @@
-ROS 2 Sentry Turret Software Path
+# ROS 2 Sentry Turret Software Path
 
-Your goal is to build a robust, modular system that separates perception, logic, and actuation—the core philosophy of ROS 2.
 
-1. The Core ROS 2 Architecture (The Three Nodes)
+## 1. The Core ROS 2 Architecture (The Three Nodes)
 
-Your project should be structured around three primary, distinct ROS 2 nodes communicating via standard topics and messages.
+| Node | Language | Function | Key Topics (Publish/Subscribe) |
+|------|-----------|-----------|--------------------------------|
+| **1. Perception Node (YOLO)** | Python | Detects objects, calculates the center of the bounding box | **Publishes:** `/detection_data` *(Custom Message)* |
+| **2. Tracking/Logic Node (Controller)** | Python | Reads detection data, calculates error, applies PID control, and generates servo angle commands | **Subscribes:** `/detection_data` <br> **Publishes:** `/turret_cmd_pos` |
+| **3. Actuation Node (Hardware Driver)** | Python / C++ | Reads angle commands, converts them to PWM/Serial signals, and interfaces directly with the servos | **Subscribes:** `/turret_cmd_pos` <br> **Publishes:** `/joint_states` *(for visualization)* |
 
-Node
-
-Language
-
-Function
-
-Key Topics (Publish/Subscribe)
-
-1. Perception Node (YOLO)
-
-Python
-
-Detects objects, calculates the center of the bounding box.
-
-Publishes: /detection_data (Custom Message)
-
-2. Tracking/Logic Node (Controller)
-
-Python
-
-Reads detection data, calculates error, applies PID control, and generates servo angle commands.
-
-Subscribes: /detection_data Publishes: /turret_cmd_pos
-
-3. Actuation Node (Hardware Driver)
-
-Python/C++
-
-Reads angle commands, converts them to PWM/Serial signals, and interfaces directly with the servos.
-
-Subscribes: /turret_cmd_pos Publishes: /joint_states (for visualization)
-
-2. Servo Control Path: Custom Node vs. ROS 2 Control
-
-You mentioned ros2_control, which is fantastic for production-level abstraction. Below are the two paths you can take:
+## 2. Servo Control Path: Custom Node vs. ROS 2 Control
 
 Path A (Recommended for Quick Start): Custom Hardware Node
 
@@ -66,11 +35,11 @@ Launch: Use a launch file to load the URDF, start the ControllerManager, and spa
 
 Verdict: If your primary goal is to get the system working quickly, start with Path A. If your primary goal is to learn the professional ROS 2 standard, commit to Path B.
 
-3. Core Logic: Target Tracking (The Controller Node)
+## 3. Core Logic: Target Tracking (The Controller Node)
 
 The Tracking/Logic Node is the brain. It solves the problem of converting pixels into servo movement.
 
-A. PID Control Loop
+### A. PID Control Loop
 
 This node will implement a Proportional-Integral-Derivative (PID) controller for both the Pan (Yaw) and Tilt (Pitch) axes independently.
 
@@ -96,7 +65,7 @@ New_Tilt_Angle = Current_Tilt_Angle + d_angle_tilt
 
 Publish: Publish the (New_Pan_Angle, New_Tilt_Angle) to the Actuation Node via /turret_cmd_pos.
 
-B. Firing Mechanism Logic
+### B. Firing Mechanism Logic
 
 The "shooting" action is a simple state trigger:
 
@@ -106,43 +75,21 @@ If |Error_Pan| < 50 AND |Error_Tilt| < 50 for a sustained duration (e.g., 1.0 se
 
 When the state is LOCKED, publish a message (std_msgs/Bool on topic /turret_cmd_fire) to a dedicated Firing Node to trigger your "shooting" hardware (e.g., a solenoid or small DC motor).
 
-4. Suggested Additional Features
+## 4. Suggested Additional Features
 
 To make this project even better and expand your ROS 2 knowledge, consider these features:
 
-Advanced ROS 2 Features
+## Advanced ROS 2 Features
 
-Feature
+| Feature | ROS 2 Implementation | Benefit |
+|----------|----------------------|----------|
+| **TF (Transformations)** | Create a `robot_state_publisher` to broadcast the positions of your pan and tilt joints. | Allows visualization in **Rviz 2** and makes coordinate transformations easier (e.g., if you add depth perception). |
+| **Rviz 2 Visualization** | Display the turret's URDF model in **Rviz 2**. Publish a custom marker message that shows the detected bounding box. | Real-time debugging and a clear visual representation of the turret's state. |
+| **ROS 2 Parameters** | Use the **ROS 2 Parameter** system to configure PID gains (`Kp`, `Ki`, `Kd`), the target lock zone radius, and the maximum sweep limits of the servos. | Allows for live tuning of controller behavior without recompiling the code. |
+| **Diagnostics** | Implement a `diagnostic_aggregator` to monitor turret status (e.g., connection health, CPU load from YOLO, and tracking error magnitude). | Essential for robust system monitoring and performance reliability. |
 
-ROS 2 Implementation
 
-Benefit
-
-TF (Transformations)
-
-Create a robot_state_publisher to broadcast the positions of your pan and tilt joints.
-
-Allows visualization in Rviz 2 and makes coordinate transformations easier (e.g., if you add depth perception).
-
-Rviz 2 Visualization
-
-Display the turret's URDF model in Rviz 2. Publish a custom marker message that shows the detected bounding box.
-
-Real-time debugging and a cool visual representation of the turret's state.
-
-ROS 2 Parameters
-
-Use the ROS 2 Parameter system to configure PID gains (Kp, Ki, Kd), the target lock zone radius, and the maximum sweep limits of the servos.
-
-Allows for tuning the controller live without recompiling the code.
-
-Diagnostics
-
-Implement a diagnostic_aggregator to monitor the turret's status, such as connection status, CPU load (from YOLO), and tracking error magnitude.
-
-Essential for robust system monitoring.
-
-Project Enhancements
+## Project Enhancements
 
 Human-Machine Interface (HMI): Create a simple web-based user interface using rosbridge_suite and a web framework (like React or raw HTML/JS) to:
 
