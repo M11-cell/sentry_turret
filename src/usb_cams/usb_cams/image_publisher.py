@@ -8,17 +8,31 @@ import cv2
 class ImagePublisherNode(Node):
     def __init__(self):
         super().__init__('image_pub_')
-        self.cam_pub_ = self.create_publisher(Image, '/camera/raw_image', 10)
-        timer_period = 0.1
-        self.timer_ = self.create_timer(timer_period, self.timer_callback)
-        self.cap = cv2.VideoCapture(0)
+
+        self.cam = cv2.VideoCapture(0)
         self.br = CvBridge()
 
+        timer_period = 0.1
+
+        self.cam_pub_ = self.create_publisher(Image, '/camera/raw_image', 10)
+        self.timer_ = self.create_timer(timer_period, self.timer_callback)
+
+        self.i = 0 # This is a counter to trakc how many images are published
+        
+
     def timer_callback(self):
-        ret, frame = self.cap.read()
+
+        ret, frame = self.cam.read()
+
+        frame = cv2.resize(frame, (820,640), interpolation=cv2.INTER_CUBIC)
+
+        #if frames are legible
         if ret == True:
             self.cam_pub_.publish(self.br.cv2_to_imgmsg(frame))
+
         self.get_logger().info('publishing video frame')
+        #updating image counter
+        self.i += 1
 
 
 

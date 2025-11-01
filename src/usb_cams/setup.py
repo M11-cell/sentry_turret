@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'sentry_tracking'
+package_name = 'usb_cams'
 
 setup(
     name=package_name,
@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'image_pub_ = sentry_tracker.image_publisher:main'
+            'img_pub_ = usb_cams.image_publisher:main',
+            'img_sub = usb_cams.image_subscriber:main'
         ],
     },
 )
