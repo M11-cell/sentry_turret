@@ -11,6 +11,9 @@
   <depend>cv_bridge</depend>
   <depend>cv2</depend>
   <depend>sensor_msgs</depend>
+  <depend>ultralytics</depend>
+  <depend>yolov8_msgs</depend>
+  <depend>threading</depend>
   
 
   <test_depend>ament_copyright</test_depend>

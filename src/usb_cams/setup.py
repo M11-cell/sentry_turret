@@ -21,7 +21,9 @@ setup(
     entry_points={
         'console_scripts': [
             'img_pub_ = usb_cams.image_publisher:main',
-            'img_sub = usb_cams.image_subscriber:main'
+            'img_sub = usb_cams.image_subscriber:main',
+            'yolo_pub = usb_cams.yolov8_ros2_pub:main',
+            'yolo_sub = usb_cams.yolov8_ros2_sub:main'
         ],
     },
 )

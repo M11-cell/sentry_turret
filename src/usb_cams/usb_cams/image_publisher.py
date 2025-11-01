@@ -28,14 +28,12 @@ class ImagePublisherNode(Node):
 
         #if frames are legible
         if ret == True:
-            self.cam_pub_.publish(self.br.cv2_to_imgmsg(frame))
+            img_msg = self.br.cv2_to_imgmsg(frame, encoding='bgr8')
+            self.cam_pub_.publish(img_msg)
 
         self.get_logger().info('publishing video frame')
         #updating image counter
         self.i += 1
-
-
-
 
 
 def main(args=None):
